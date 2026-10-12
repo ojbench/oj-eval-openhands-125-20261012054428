@@ -2,6 +2,7 @@
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
+#include <cstdio>
 
 using namespace std;
 
@@ -45,38 +46,25 @@ public:
     }
 };
 
-// Fast input function
-inline int readInt() {
-    int x = 0;
-    char c = getchar();
-    while (c < '0' || c > '9') {
-        c = getchar();
-    }
-    while (c >= '0' && c <= '9') {
-        x = x * 10 + c - '0';
-        c = getchar();
-    }
-    return x;
-}
-
 int main() {
     // Use faster input/output
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
     
-    int t = readInt();
+    int t;
+    scanf("%d", &t);
     
     while (t--) {
-        int n = readInt();
+        int n;
+        scanf("%d", &n);
         
         vector<pair<int, int>> inequalities;
         UnionFind uf;
         
         // Process all constraints
         for (int i = 0; i < n; i++) {
-            int a = readInt();
-            int b = readInt();
-            int e = readInt();
+            int a, b, e;
+            scanf("%d %d %d", &a, &b, &e);
             
             if (e == 1) {
                 // Equality constraint: a == b
