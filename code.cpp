@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <unordered_map>
+#include <map>
 #include <algorithm>
 #include <cstdio>
 
@@ -8,17 +8,19 @@ using namespace std;
 
 class UnionFind {
 private:
-    unordered_map<int, int> parent;
-    unordered_map<int, int> rank;
+    vector<int> parent;
+    vector<int> rank;
     
 public:
-    int find(int x) {
-        if (parent.find(x) == parent.end()) {
-            parent[x] = x;
-            rank[x] = 0;
-            return x;
+    UnionFind(int n) {
+        parent.resize(n);
+        rank.resize(n, 0);
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;
         }
-        
+    }
+    
+    int find(int x) {
         if (parent[x] != x) {
             parent[x] = find(parent[x]);
         }
@@ -44,12 +46,6 @@ public:
     bool connected(int x, int y) {
         return find(x) == find(y);
     }
-    
-    // Clear all data for reuse
-    void clear() {
-        parent.clear();
-        rank.clear();
-    }
 };
 
 int main() {
@@ -64,29 +60,51 @@ int main() {
         int n;
         scanf("%d", &n);
         
-        vector<pair<int, int>> inequalities;
-        inequalities.reserve(n);  // Reserve space to avoid reallocations
+        vector<tuple<int, int, int>> constraints;
+        vector<int> variables;
         
-        UnionFind uf;
-        
-        // Process all constraints
+        // Read all constraints and collect variables
         for (int i = 0; i < n; i++) {
             int a, b, e;
             scanf("%d %d %d", &a, &b, &e);
+            constraints.emplace_back(a, b, e);
+            variables.push_back(a);
+            variables.push_back(b);
+        }
+        
+        // Coordinate compression
+        sort(variables.begin(), variables.end());
+        variables.erase(unique(variables.begin(), variables.end()), variables.end());
+        
+        // Map original variable indices to compressed indices
+        map<int, int> varToIndex;
+        for (int i = 0; i < variables.size(); i++) {
+            varToIndex[variables[i]] = i;
+        }
+        
+        // Create UnionFind with compressed indices
+        UnionFind uf(variables.size());
+        
+        // Process equality constraints
+        bool valid = true;
+        vector<pair<int, int>> inequalities;
+        
+        for (auto& [a, b, e] : constraints) {
+            int idxA = varToIndex[a];
+            int idxB = varToIndex[b];
             
             if (e == 1) {
                 // Equality constraint: a == b
-                uf.unite(a, b);
+                uf.unite(idxA, idxB);
             } else {
                 // Inequality constraint: a != b
-                inequalities.push_back({a, b});
+                inequalities.emplace_back(idxA, idxB);
             }
         }
         
         // Check if any inequality constraint is violated
-        bool valid = true;
-        for (auto& p : inequalities) {
-            if (uf.connected(p.first, p.second)) {
+        for (auto& [a, b] : inequalities) {
+            if (uf.connected(a, b)) {
                 valid = false;
                 break;
             }
@@ -97,10 +115,6 @@ int main() {
         } else {
             printf("NO\n");
         }
-        
-        // Clear data structures for next test case
-        inequalities.clear();
-        uf.clear();
     }
     
     return 0;
