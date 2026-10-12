@@ -45,24 +45,38 @@ public:
     }
 };
 
+// Fast input function
+inline int readInt() {
+    int x = 0;
+    char c = getchar();
+    while (c < '0' || c > '9') {
+        c = getchar();
+    }
+    while (c >= '0' && c <= '9') {
+        x = x * 10 + c - '0';
+        c = getchar();
+    }
+    return x;
+}
+
 int main() {
+    // Use faster input/output
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
     
-    int t;
-    cin >> t;
+    int t = readInt();
     
     while (t--) {
-        int n;
-        cin >> n;
+        int n = readInt();
         
         vector<pair<int, int>> inequalities;
         UnionFind uf;
         
         // Process all constraints
         for (int i = 0; i < n; i++) {
-            int a, b, e;
-            cin >> a >> b >> e;
+            int a = readInt();
+            int b = readInt();
+            int e = readInt();
             
             if (e == 1) {
                 // Equality constraint: a == b
@@ -82,7 +96,11 @@ int main() {
             }
         }
         
-        cout << (valid ? "YES" : "NO") << '\n';
+        if (valid) {
+            printf("YES\n");
+        } else {
+            printf("NO\n");
+        }
     }
     
     return 0;
