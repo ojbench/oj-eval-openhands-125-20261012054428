@@ -44,6 +44,12 @@ public:
     bool connected(int x, int y) {
         return find(x) == find(y);
     }
+    
+    // Clear all data for reuse
+    void clear() {
+        parent.clear();
+        rank.clear();
+    }
 };
 
 int main() {
@@ -59,6 +65,8 @@ int main() {
         scanf("%d", &n);
         
         vector<pair<int, int>> inequalities;
+        inequalities.reserve(n);  // Reserve space to avoid reallocations
+        
         UnionFind uf;
         
         // Process all constraints
@@ -89,6 +97,10 @@ int main() {
         } else {
             printf("NO\n");
         }
+        
+        // Clear data structures for next test case
+        inequalities.clear();
+        uf.clear();
     }
     
     return 0;
